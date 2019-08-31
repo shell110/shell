@@ -5,4 +5,5 @@
 # author: hlions
 # date: 2019/10/12
 
-echo "hello world"
+var_a="1\n2\n3"
+echo -e ${var_a}
