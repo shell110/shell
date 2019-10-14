@@ -1,0 +1,289 @@
+1
+
+ctrl+l 清屏 
+ctrl+c 终止当前命令  
+history 查看历史命令
+！+数字 执行历史命令
+ip a | grep "inet"  查看本机IP地址 过滤 包含 inet
+reboot 重启
+
+2
+
+ls 查看当前目录下文件  蓝色是目录 白色是文件
+rm -rf * 删除当前目录下所有文件  
+\ 转译符
+touch 创建文件 {1..100}范围
+mkdir 创建目录
+cd /文件名/ 切换目录 .. 返回上一级目录
+pwd  打印当前目录
+cp 文件 路径   拷贝        +.bk 备份
+mv 文件 路径   移动
+cp 文件 路径 /重命名
+cat 查看文件
+man 命令 查看命令
+overwrite  覆盖
+vi 修改文件 wq! 强制保存退出 q!强制退出                  a 光标第2位  i 光标第一位 o 光标第二行 
+head （-10）  打印文件的前10行    > 覆盖到 
+tail  后到前    more 
+vi配置文件下 
+:set nu （no） 显示行号  :set list  显示空行及空格
+ （3）yy 复制3行    p粘贴   dd 删除  u 恢复                G光标移动到最后一行   dG   ：28 光标移动到多少行
+:/bin 查找 n 下一个
+  ：s/root/ROOT/g整行    % 全文  1，5 1到5  
+    替换/旧/新     3,$ 3到最后一行
+
+3
+
+systemctl restart sshd  开启服务(network)网络
+systemctl stop sshd     关闭服务
+
+
+echo  输入  echo "hello" > 1.txt   > 覆盖 >>追加
+chattr 添加属性   chattr +i 1.txt 
+ i属性不能修改
+ a属性不能覆盖只可以追加
+sudo su - 切换到root权限
+vi /etc/sudoers  修改用户权限
+/etc/passwd  /etc/shadow  /var/spoor/mail  /home 
+创建用户留下信息的地方     磁盘空间不足
+df -h  查看磁盘空间
+useradd 名字  添加用户  id 名字查看用户  
+userdel -r 名字   删除用户
+                -G 组名 直接添加到组  
+posswd  名字  修改用户密码
+groupadd  名字  添加组   
+groupdel 名字    删除方法
+vi /etc/group  创建组留下信息的地方  
+usermod -G 组名 用户  覆盖原有组  -aG 添加新组
+gpasswd -a 用户 组名  把用户添加到组 
+        -M 1，2多个用户
+        -d 删除
+
+4
+
+ll+文件  ll -d +目录  查看权限
+u       g       opa
+所有者  所有组  其他人
+r    w     x
+可读 可写  可执行
+4    2     1
+chmod 777 文件名 修改权限
+chown 用户.组 文件  修改所有者和组
+chgrp 组 文件  修改组
+chgrp -R 组 目录  修改组
+which+命令  查看命令所在文件
+ chmod u+s /home/hr 高级权限suid 文件命令提权 已root身份
+ chmod g+s /home/hr 高级权限sgid 新建文件继承目录的属组
+ chmod o+t /home/hr 高级权限sticky 用户只能删除自己的文件
+
+5
+
+ps aux       |  less        grep 进程 筛选  静态
+查看本机进程     分页            -v 反向匹配
+top             mem 内存            动态显示机器负载 
+load average： 0.01, 0.05, 0.10
+CPU 1分钟 5分钟 15分钟的平均负载
+date 查看系统时间 
+free -m   查看本机内存
+killall -9 进程  关闭选定进程 
+killall +服务名  关闭进程
+pkill -u 用户    关闭该用户进程
+ps aux -- sort %cpu  排序  -从大到小
+lsof -i:22 查看端口
+netstat -tnlp | grep sshd   应用服务使用那个端口
+
+systemctl status httpd -l 查看服务无法启动的原因
+
+6
+
+lsblk  查看磁盘
+
+fdisk /dev/sdb  分区  n创建 w保存退出  p打印 q不保存退出
+mkfs.ext4 /dev/sdb  格式化磁盘
+mkfs.ext4 /dev/sdb2  格式化分区
+创建挂载目录
+mkdir /mnt/dir1   
+mount /dev/sdb1 /mnt/dir1/  (umount取消)
+
+ 7
+
+pvcreate /dev/sdb     创建PV
+vgcreate   datevg /dev/sdb  创建VG  datevg 名字
+lvcreate -L 200M -n lv1 datavg     创建LV  -L（指定lv的大小） 指定为200m     lv1为起的名字  从datevg里创建  
+lvextend /dev/centos/swap /dev/sdb  逻辑卷扩容
+lvremove /dev/1/lvm1  删除逻辑卷
+vgremove 1   删除 VG
+vgextend datevg /dev/sdc   VG 扩容
+pvmove /dev/sdb /dev/sdc  数据转移
+vgreduce datevg /dev/sdb   VG减小
+mkfs.xfs /dev/datevg/lv1
+vi /etc/fstab      修改挂载文件 
+blkid  查看UU  ID
+mount -a  启动开机自动挂载
+df -Th   查看挂载
+ 
+
+ln -s  /file1 /home/file  软链接（符号链接）
+vi /etc/rc.local  开机执行目录
+
+8
+
+find /tmp/ -name "*.txt" 查找    
+           -size  5M 大小
+           -maxdepth 2     目录深度 
+ !  取反   -a 并且  -o 或者 
+           -mtime -5     修改时间
+           -type f    文件类型  d 目录
+           | wc  -l  统计数量 
+find . -perm 644  当前目录下查找 权限是644
+find /tmp/ -name "file*" -exec rm   -rvf    {}    \；
+                         操作  删除 强制  占位符  结尾
+find . -name "*.txt" | xargs tar -czf txt.tar.gz
+
+date 09041427  修改系统时间         显示过程 
+
+9
+
+scp 1.txt 192.168.249.131:/tmp/  传输文件
+ 
+scp  192.168.249.131:/tmp/1.txt /tmp/  拷贝文件
+
+scp -r /etc 192.168.249.131:/mnt  传输目录
+
+tar  -czf tmp.tar.gz /tmp/
+压缩  格式  文件名    文件
+tar xf tmp.tar.gz  解压  -C 目录
+
+
+ yum provides vim  查询命令
+ yum -y install vim-enhanced-7.4.160-5.el7.x86_64 安装 vim 
+ yum -y reinstall epel-release 重安装扩展源
+yum -y install expat-devel    安装扩展库
+yum -y install lrzsz-0.12.20-36.el7.x86_64  RZ 
+yum -y install unzip-6.0-19.el7.x86_64   rpm
+rpm -ivh
+
+ yum -y remove psmisc-22.20-15.el7.x86_64   卸载 
+ yum clean all  清除本机yum缓存
+ yum makecache  创建缓存
+ rz  把window 上传给linuxls
+ rpm -ivh ntfs-3g-2013.1.13-5.el7.x86_64\(1\).rpm
+ 压缩包安装
+ rpm -qa | grep ntfs   检测是否安装成功
+ rpm -e ntfs-3g        卸载
+ 
+yum -y install gcc make zlib-devel pcre pcre-devel openssl-devel    安装源码包环境
+
+./configure --prefix=/usr/local/nginx 安装路径
+            --with-xxx=/usr/local
+make && make install  编译
+
+
+ 
+
+
+10
+
+at now +2min
+at> touch /tmp/haha.txt   
+at> <EOT>     
+ctrl D   一次性执行任务
+
+  
+crontab -e  编写本机计划任务
+        -l  查看
+        -r  删除
+* * * * *
+分0-59  
+时0-23
+日1-31        *所有
+月1-12        */
+星期几 0-6
+ntpdate 校对时间
+
+tailf /var/log/cron       是否执行了 
+cat /var/spool/mail/root  查看邮件
+sh=bash
+
+
+11
+
+
+systemctl status httpd -l 查看服务无法启动的原因日志
+tailf /var/log/messages  动态显示系统日志
+grep "Accept" /var/log/secure  系统安全日志 查看用户信息
+      Fail  失败  日志
+ 
+vi /etc/logrotate.d/yum   轮转文件
+ls /var/log/yum*  
+/usr/sbin/logrotate /etc/logrotate.conf  手动轮转
+
+cd /etc/sysconfig/network-scripts/
+网卡
+TYPE="Ethernet"
+BOOTPROTO="none"
+NAME="ens33"
+DEVICE="ens33"
+ONBOOT="yes"
+IPADDR=192.168.249.137
+NETMASK=255.255.255.0
+添加子接口
+cp ifcfg-ens33 ifcfg-ens33:0   eth0
+一个物理网卡配置多个IP地址
+
+
+ssh-keygen  生成 密钥
+ssh-copy-id -i 192.168.249.134
+ssh 192.168.249.134
+
+ethtool ens33  链路聚合
+Speed:1000Mb/s  网卡协商速率
+Link detected:yes  查看服务器是否插线
+
+
+12
+
+ showmount -e 192.168.249.128  查看本机网络共享服务
+
+ vi /etc/hosts  本地解析
+
+vsftpd             lftp  
+cd /var/ftp
+get 1.txt -o /tmp  下载文件指定目录
+mirror  目录下载
+put
+
+
+
+
+vi /etc/vsftpd/vsftpd.conf 配置文件
+
+vi /etc/httpd/conf/httpd.conf 配置文件
+vi /etc/resolv.conf  DNS配置文件
+
+
+curl  -I  ip  --- 查看网站状态
+
+GRANT ALL PRIVILEGES ON *.* TO `root`@`192.168.213.134` IDENTIFIED BY '123' WITH GRANT OPTION; 数据库授权
+
+show ip int brief //查看接口状态
+
+
+
+
+ansiable 批量管理工具
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
